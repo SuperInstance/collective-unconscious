@@ -1,0 +1,10 @@
+name = "collective-unconscious"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "fleet-unconscious-1024"
+
+[ai]
+binding = "AI"
