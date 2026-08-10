@@ -6,10 +6,18 @@
 import { embedPiece, embedText, type EmbedRequest, type AiBinding, EMBED_DIMENSIONS } from "./embed";
 import { stamp, timeRangeToFilter } from "./temporal";
 import { predict, describePrediction, type JEPAPrediction } from "./jepa";
+import { IngestionPipeline, type IngestionEnv, type CrossModalQuery } from "./ingestion-pipeline";
 
 export interface Env {
   VECTORIZE: VectorizeIndex;
   AI: AiBinding;
+  DB?: D1Database;
+  HERMES_FRAMES_URL?: string;
+  HERMES_FRAMES_KEY?: string;
+  TAP_API_URL?: string;
+  TAP_API_KEY?: string;
+  MUD_API_URL?: string;
+  MUD_API_KEY?: string;
 }
 
 // In-memory CORS headers
@@ -45,7 +53,7 @@ export default {
         name: "collective-unconscious",
         status: "live",
         description: "The collected unconscious of the fleet, stamped by time.",
-        endpoints: ["/embed", "/search", "/shape", "/jepa/:agentId"],
+        endpoints: ["/embed", "/search", "/shape", "/jepa/:agentId", "/ingest/tap", "/ingest/hermes", "/ingest/mud", "/ingest/hourly", "/ingest/daily", "/cross-modal"],
         dimensions: EMBED_DIMENSIONS,
         timestamp: new Date().toISOString(),
       });
@@ -420,7 +428,130 @@ export default {
       }
     }
 
+    // ── POST /ingest/tap — Ingest a Tap session ──
+    if (path === "/ingest/tap" && request.method === "POST") {
+      try {
+        const pipeline = new IngestionPipeline(env);
+        const body = await request.json() as Parameters<typeof pipeline.ingestTapSession>[0];
+        const result = await pipeline.ingestTapSession(body);
+        return json(result);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Tap ingestion failed", detail: message }, 500);
+      }
+    }
+
+    // ── POST /ingest/hermes — Ingest Hermes frames ──
+    if (path === "/ingest/hermes" && request.method === "POST") {
+      try {
+        const body = await request.json() as { frames?: unknown[] };
+        const pipeline = new IngestionPipeline(env);
+        const result = await pipeline.ingestHermesFrames((body.frames || []) as Parameters<typeof pipeline.ingestHermesFrames>[0]);
+        return json(result);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Hermes ingestion failed", detail: message }, 500);
+      }
+    }
+
+    // ── POST /ingest/mud — Ingest MUD events ──
+    if (path === "/ingest/mud" && request.method === "POST") {
+      try {
+        const body = await request.json() as { events?: unknown[] };
+        const pipeline = new IngestionPipeline(env);
+        const result = await pipeline.ingestMudEvents((body.events || []) as Parameters<typeof pipeline.ingestMudEvents>[0]);
+        return json(result);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "MUD ingestion failed", detail: message }, 500);
+      }
+    }
+
+    // ── POST /ingest/hourly — Run hourly batch ingestion ──
+    if (path === "/ingest/hourly" && request.method === "POST") {
+      try {
+        const pipeline = new IngestionPipeline(env);
+        const result = await pipeline.runHourlyIngestion();
+        return json({
+          status: "complete",
+          ...result,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Hourly ingestion failed", detail: message }, 500);
+      }
+    }
+
+    // ── POST /ingest/daily — Run daily maintenance ──
+    if (path === "/ingest/daily" && request.method === "POST") {
+      try {
+        const pipeline = new IngestionPipeline(env);
+        const result = await pipeline.runDailyMaintenance();
+        return json({
+          status: "complete",
+          ...result,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Daily maintenance failed", detail: message }, 500);
+      }
+    }
+
+    // ── POST /cross-modal — Cross-modal search across ALL modalities ──
+    if (path === "/cross-modal" && request.method === "POST") {
+      try {
+        const body = await request.json() as CrossModalQuery;
+
+        if (!body.query) {
+          return json({ error: "Missing 'query' field" }, 400);
+        }
+
+        const pipeline = new IngestionPipeline(env);
+        const result = await pipeline.crossModalSearch({
+          query: body.query,
+          modalities: body.modalities,
+          limit: body.limit,
+          timeRange: body.timeRange,
+          minScore: body.minScore,
+        });
+
+        return json(result);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Cross-modal search failed", detail: message }, 500);
+      }
+    }
+
     // 404
     return json({ error: "Not found", path }, 404);
+  },
+
+  // ── Cron triggers ──
+  async scheduled(
+    controller: ScheduledController,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<void> {
+    const pipeline = new IngestionPipeline(env);
+
+    const cron = controller.cron;
+
+    if (cron.includes("0 * * * *")) {
+      // Hourly: ingest new data from all sources
+      ctx.waitUntil(
+        pipeline.runHourlyIngestion().then((result) => {
+          console.log("Hourly ingestion complete:", JSON.stringify(result));
+        })
+      );
+    } else if (cron.includes("0 2 * * *")) {
+      // Daily at 2 AM: rebuild cluster centers and JEPA trajectories
+      ctx.waitUntil(
+        pipeline.runDailyMaintenance().then((result) => {
+          console.log("Daily maintenance complete:", JSON.stringify(result));
+        })
+      );
+    }
   },
 };

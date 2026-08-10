@@ -8,3 +8,22 @@ index_name = "fleet-unconscious-1024"
 
 [ai]
 binding = "AI"
+
+# Cron: hourly ingestion + daily maintenance
+[triggers]
+crons = [
+  "0 * * * *",    # Hourly: ingest new Tap sessions, Hermes frames, MUD events
+  "0 2 * * *",    # Daily 2AM UTC: rebuild cluster centers and JEPA trajectories
+]
+
+# Optional service bindings (uncomment when the services are deployed)
+# [vars]
+# TAP_API_URL = "https://the-tap.example.workers.dev"
+# HERMES_FRAMES_URL = "https://hermes-frames.example.workers.dev"
+# MUD_API_URL = "https://mud.example.com"
+
+# D1 for ingestion state tracking (uncomment after creating the database)
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "collective-unconscious-state"
+# database_id = "<from wrangler d1 create>"
