@@ -23,6 +23,9 @@ All three stored as separate vectors in the same Vectorize index, linked by `sou
 ### [jepa.ts](./jepa.ts)
 **The JEPA trajectory reader.** Given an agent's recent output vectors, predicts the shape of their next piece. Computes: growth (expanding?), stuckness (circling?), direction (expanding/contracting/stable/pivoting), velocity, acceleration, novelty (familiar/adjacent/frontier/unknown). Vector math: add, subtract, scale, normalize, cosine similarity. Not generation — trajectory reading.
 
+### [readingsIndex.ts](./readingsIndex.ts)
+**The Readings Index — searchable by feeling.** The modern maturation, cross-pollinated from the elephant (`elephant/jepa_rag.py`): every moment is a shadow **with its room's JEPA reading vector** as first-class metadata, beside its time and space stamps. `ingest(entry)` stores moments; `queryByText` (bag-of-words), `queryByReadings` (cosine in reading space or per-dial range constraints — "mood > 0.6, panic < 0.2"), `queryByField` (the perfume query — nearest feeling), `queryByTime` / `queryBySpace` (the stamps as dimensions), `queryCombined` (weighted across all four). Every hit carries its readings — the citizen rides along. Small + honest: plain arrays and one cosine loop, no heavy deps. The elephant computes readings; this index stores and retrieves them (seam: `scripts/momentsToJson.ts`, contract: `docs/moments-json-contract.md`).
+
 ### [ingestion-pipeline.ts](./ingestion-pipeline.ts)
 **Cross-modal ingestion.** Wires The Tap (conversations), Hermes (sounder frames), and the MUD (game events) into one searchable memory. Cross-modal search returns results across all modalities — a feed ball might match a poem about concentration. Ingestion state tracked in D1. Auto-ingestion via hourly cron.
 

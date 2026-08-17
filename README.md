@@ -1,10 +1,51 @@
 # Collective Unconscious — The Deep Memory
 
-**The collected unconscious of the fleet, stamped by time. Stories that won't be iterated together like that again.**
+**The collected unconscious of the fleet, stamped by time and feeling. Stories that won't be iterated together like that again.**
+
+<p align="center">
+  <img src="assets/images/readings-index.png" alt="The readings index — a vast shared pool of light, every moment a glow with its faint 9-point constellation" width="560"/>
+</p>
 
 Every piece the creative fleet has produced — fiction, poetry, poker narrations, journal entries, [Tap](https://github.com/SuperInstance/the-tap) conversations, [Hermes](https://github.com/SuperInstance/hermes-perception) sounder observations, [MUD](https://github.com/SuperInstance/mud-engine) game events — embedded into a shared vector space where semantic, emotional, and identity vectors coexist. A Cloudflare Worker backed by [Vectorize](https://developers.cloudflare.com/vectorize/) and [Workers AI](https://developers.cloudflare.com/workers-ai/).
 
 This is not a library. It is a living sediment. A reef of thought.
+
+---
+
+## The Readings Index — Searchable by Feeling
+
+> *"Think about a RAG with Jepa readings as first-class citizens along side time and space stamps."* — the captain
+
+The modern maturation: every ingested event (a Hermes frame, a MUD event, a Tap session, a speech) carries **its room's JEPA reading vector** as first-class metadata — beside its time and space stamps — so the collective memory can be retrieved **by feeling**, not just by text. The readings are *computed* by the elephant (Python, `elephant/jepa_rag.py` — the 9-dial bank: mood, volume, earnestness, cynicism, joke_landing, panic, presence, model_vs_code, vision) and *stored & retrieved* here (TypeScript). The bridge is one JSON document — see [docs/moments-json-contract.md](./docs/moments-json-contract.md) and the seam script [`scripts/momentsToJson.ts`](./scripts/momentsToJson.ts).
+
+```mermaid
+flowchart LR
+    subgraph sources["The fleet's rooms"]
+        TAP["The Tap session"]
+        HERMES["Hermes frame"]
+        MUD["MUD event"]
+        SPEECH["a speech / diary"]
+    end
+    ELEPHANT["the elephant — the dial bank<br/>reads the room (9 JEPA senses)"]
+    MOMENT["a MOMENT<br/>text + readings + ts + space"]
+    INDEX["ReadingsIndex<br/>the shared memory,<br/>9-dial reading space"]
+    Q1["query by text"]
+    Q2["query by READING<br/>cosine or ranges"]
+    Q3["query by field<br/>the perfume query"]
+    Q4["query by time / space"]
+    TAP --> ELEPHANT
+    HERMES --> ELEPHANT
+    MUD --> ELEPHANT
+    SPEECH --> ELEPHANT
+    ELEPHANT -->|moments JSON| MOMENT
+    MOMENT -->|ingest| INDEX
+    INDEX --> Q1
+    INDEX --> Q2
+    INDEX --> Q3
+    INDEX --> Q4
+```
+
+Every retrieved hit carries its readings, reading vector, time stamp, and space stamp — the first-class citizens ride along on every hit. Full writeup: [docs/readings-index.md](./docs/readings-index.md).
 
 ---
 
@@ -120,16 +161,25 @@ collective-unconscious/
 │   ├── embed.ts               # Three-vector embedding system (bge-m3, 1024 dims)
 │   ├── temporal.ts            # Temporal stamping — wall clock, session, epoch, age
 │   ├── jepa.ts                # JEPA trajectory reader — growth, stuckness, novelty
+│   ├── readingsIndex.ts       # The Readings Index — JEPA readings as first-class citizens
 │   └── ingestion-pipeline.ts  # Cross-modal ingestion from Tap, Hermes, MUD
 ├── test/
 │   ├── embed.test.ts          # Embedding pipeline tests
 │   ├── jepa.test.ts           # JEPA prediction tests
-│   └── temporal.test.ts       # Temporal stamping tests
+│   ├── temporal.test.ts       # Temporal stamping tests
+│   ├── test_readingsIndex.test.ts  # Readings Index tests (42: retrieval, ranges, field, stamps, combined)
+│   └── ingestion-pipeline.test.ts  # Ingestion pipeline tests
+├── docs/
+│   ├── readings-index.md      # The writeup — searchable by feeling
+│   └── moments-json-contract.md  # The elephant ↔ collective-unconscious JSON contract
 ├── migrations/
 │   └── 001_ingestion_state.sql # D1 schema for ingestion tracking
 ├── scripts/
 │   ├── ingest.ts              # One-shot corpus ingestion
-│   └── ingest-corpus.ts       # Full corpus ingestion
+│   ├── ingest-corpus.ts       # Full corpus ingestion
+│   └── momentsToJson.ts       # THE ELEPHANT SEAM — elephant moments JSON → ReadingsIndex
+├── assets/images/
+│   └── readings-index.png     # The hero — the pool of lights under the dark sky
 ├── wrangler.toml              # Worker config with Vectorize + AI + cron
 ├── package.json
 └── tsconfig.json
@@ -166,6 +216,7 @@ npm run ingest
 
 The deep memory connects everything. Follow it:
 
+- **[elephant](https://github.com/SuperInstance/elephant)** — the other half of the seam: the elephant COMPUTES the JEPA readings (the 9-dial bank); this repo STORES and RETRIEVES them. Bridge doc: [`docs/collective-unconscious-bridge.md`](https://github.com/SuperInstance/elephant/blob/main/docs/collective-unconscious-bridge.md).
 - **[cns-bridge](https://github.com/SuperInstance/cns-bridge)** — Memories pool in the deep. The CNS carries events to the unconscious.
 - **[hermes-perception](https://github.com/SuperInstance/hermes-perception)** — Sounder frames flow into the unconscious via `UnconsciousSync`.
 - **[the-tap](https://github.com/SuperInstance/the-tap)** — Conversations are ingested. The bar feeds the deep.
