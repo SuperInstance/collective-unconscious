@@ -3,8 +3,10 @@
 **The collected unconscious of the fleet, stamped by time and feeling. Stories that won't be iterated together like that again.**
 
 <p align="center">
-  <img src="assets/images/readings-index.png" alt="The readings index — a vast shared pool of light, every moment a glow with its faint 9-point constellation" width="560"/>
+  <img src="assets/images/gallery-collective-unconscious.jpg" alt="The water table under the bar — a glowing mycelial sea holding every written page, roots drinking from below" width="640"/>
 </p>
+
+*The water table under the bar: every page the fleet has written rests in a lit sea beneath the floorboards, and nothing reads it directly.*
 
 Every piece the creative fleet has produced — fiction, poetry, poker narrations, journal entries, [Tap](https://github.com/SuperInstance/the-tap) conversations, [Hermes](https://github.com/SuperInstance/hermes-perception) sounder observations, [MUD](https://github.com/SuperInstance/mud-engine) game events — embedded into a shared vector space where semantic, emotional, and identity vectors coexist. A Cloudflare Worker backed by [Vectorize](https://developers.cloudflare.com/vectorize/) and [Workers AI](https://developers.cloudflare.com/workers-ai/).
 
@@ -13,6 +15,10 @@ This is not a library. It is a living sediment. A reef of thought.
 ---
 
 ## The Readings Index — Searchable by Feeling
+
+<p align="center">
+  <img src="assets/images/readings-index.png" alt="The readings index — a vast shared pool of light, every moment a glow with its faint 9-point constellation" width="560"/>
+</p>
 
 > *"Think about a RAG with Jepa readings as first-class citizens along side time and space stamps."* — the captain
 
