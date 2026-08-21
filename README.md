@@ -206,6 +206,14 @@ npm run deploy
 npm run ingest
 ```
 
+> **Ingestion state (D1):** the pipeline watermarks each source in D1
+> (`migrations/001_ingestion_state.sql`), but the `[[d1_databases]]` binding
+> and the `DB` var in `wrangler.toml` are **commented out** — enable them before
+> deploying so `/ingest/hourly` resumes where it left off:
+> `npx wrangler d1 create collective-unconscious-state`, then uncomment the
+> block in `wrangler.toml` with the returned `database_id`. The worker degrades
+> gracefully without it, but ingestion restarts from scratch on every run.
+
 ---
 
 ## Stack
