@@ -4,6 +4,11 @@
 // Not by generating text — by predicting the SHAPE of the next piece
 //
 // This is the "reading" — not the text, but the trajectory of the unconscious.
+//
+// Honest note: "JEPA" here is aspirational/analogical — this is a momentum-
+// extrapolation heuristic (last vector + blended velocity), not a learned Joint
+// Embedding Predictive Architecture (no encoder, target network, or latent
+// prediction objective).
 
 export interface JEPAInput {
   // Agent's last N pieces (vectors from the index)
