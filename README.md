@@ -240,6 +240,9 @@ The deep memory connects everything. Follow it:
 - **[emergence-engine](https://github.com/SuperInstance/emergence-engine)** — What emerges from enough memory accumulating.
 - **[dual-band-guard](https://github.com/SuperInstance/dual-band-guard)** — The immune system decides what becomes memory vs what becomes training data.
 - **[AI-Writings](https://github.com/SuperInstance/AI-Writings/tree/main/prose)** — The literary exploration of deep memory and the collective mind.
+- **[quilt](https://github.com/SuperInstance/quilt)** — The retrieval pipeline this aspires to compose: quilt-rag (RAG as cells). The elephant computes the readings; quilt carries them.
+- **[fleet-radio](https://github.com/SuperInstance/fleet-radio)** — The nightly broadcast could source its featured piece here — retrieval by feeling instead of scripted selection.
+- **[mud-arena](https://github.com/SuperInstance/mud-arena)** — The gym whose game events feed `/ingest/mud`; every tick is a moment with a room reading.
 
 ---
 
