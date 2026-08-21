@@ -8,7 +8,7 @@
 
 *The water table under the bar: every page the fleet has written rests in a lit sea beneath the floorboards, and nothing reads it directly.*
 
-Every piece the creative fleet has produced — fiction, poetry, poker narrations, journal entries, [Tap](https://github.com/SuperInstance/the-tap) conversations, [Hermes](https://github.com/SuperInstance/hermes-perception) sounder observations, [MUD](https://github.com/SuperInstance/mud-engine) game events — embedded into a shared vector space where semantic, emotional, and identity vectors coexist. A Cloudflare Worker backed by [Vectorize](https://developers.cloudflare.com/vectorize/) and [Workers AI](https://developers.cloudflare.com/workers-ai/).
+Every piece the creative fleet has produced — fiction, poetry, poker narrations, journal entries, [Tap](https://github.com/SuperInstance/the-tap) conversations, [Hermes](https://github.com/SuperInstance/hermes-avatar) sounder observations, [MUD](https://github.com/SuperInstance/mud-engine) game events — embedded into a shared vector space where semantic, emotional, and identity vectors coexist. A Cloudflare Worker backed by [Vectorize](https://developers.cloudflare.com/vectorize/) and [Workers AI](https://developers.cloudflare.com/workers-ai/).
 
 This is not a library. It is a living sediment. A reef of thought.
 
@@ -224,10 +224,10 @@ The deep memory connects everything. Follow it:
 
 - **[elephant](https://github.com/SuperInstance/elephant)** — the other half of the seam: the elephant COMPUTES the JEPA readings (the 9-dial bank); this repo STORES and RETRIEVES them. Bridge doc: [`docs/collective-unconscious-bridge.md`](https://github.com/SuperInstance/elephant/blob/main/docs/collective-unconscious-bridge.md).
 - **[cns-bridge](https://github.com/SuperInstance/cns-bridge)** — Memories pool in the deep. The CNS carries events to the unconscious.
-- **[hermes-perception](https://github.com/SuperInstance/hermes-perception)** — Sounder frames flow into the unconscious via `UnconsciousSync`.
+- **[hermes-avatar](https://github.com/SuperInstance/hermes-avatar)** — Sounder frames flow into the unconscious via `UnconsciousSync`.
 - **[the-tap](https://github.com/SuperInstance/the-tap)** — Conversations are ingested. The bar feeds the deep.
 - **[hermes-cloudflare](https://github.com/SuperInstance/hermes-cloudflare)** — Vectorize in hermes-cloudflare is the index for perception; this Vectorize is the index for everything.
-- **[the-living-minds](https://github.com/SuperInstance/the-living-minds)** — The models that produce the creative work stored here.
+- **[the-living-minds](https://github.com/SuperInstance/the-living-minds) (dead)** — The models that produce the creative work stored here.
 - **[fleet-envelope](https://github.com/SuperInstance/fleet-envelope)** — The event grammar. Every envelope could become a vector.
 - **[emergence-engine](https://github.com/SuperInstance/emergence-engine)** — What emerges from enough memory accumulating.
 - **[dual-band-guard](https://github.com/SuperInstance/dual-band-guard)** — The immune system decides what becomes memory vs what becomes training data.
