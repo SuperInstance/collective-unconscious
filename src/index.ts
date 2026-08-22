@@ -3,6 +3,10 @@
 // The collected unconscious of the creative fleet, stamped by time.
 // Stories that won't be iterated together like that again.
 
+import { computeSpectralInvariants, FOURTEEN_THEOREMS, EIGHT_PRIMITIVES, getShape, SPECTRAL_DIMENSIONS } from "./spectral";
+import { computeTangleProjections, getTangle, TWELVE_FRAMEWORKS } from "./tangle";
+import { analyzeVelatoPhrase, getVelatoPenroseThesis } from "./velato-penrose";
+import { THEOREM_GRAPH } from "./theorems";
 import { embedPiece, embedText, type EmbedRequest, type AiBinding, EMBED_DIMENSIONS } from "./embed";
 import { stamp, timeRangeToFilter } from "./temporal";
 import { predict, describePrediction, type JEPAPrediction } from "./jepa";
@@ -53,9 +57,114 @@ export default {
         name: "collective-unconscious",
         status: "live",
         description: "The collected unconscious of the fleet, stamped by time.",
-        endpoints: ["/embed", "/search", "/shape", "/jepa/:agentId", "/ingest/tap", "/ingest/hermes", "/ingest/mud", "/ingest/hourly", "/ingest/daily", "/cross-modal"],
+        endpoints: [
+          "/embed", "/search", "/shape", "/jepa/:agentId",
+          "/ingest/tap", "/ingest/hermes", "/ingest/mud",
+          "/ingest/hourly", "/ingest/daily", "/cross-modal",
+          // The SHAPE — the deep-math layer
+          "/shape/t4",            // The flat 4-torus T^4 with Connes-Moscovici spectral triple
+          "/spectral/invariants", // The 14 spectral invariants
+          "/tangle/projections",  // The 12 projections of 𝕋
+          "/theorems",            // The 14 Grand Unification Theorems
+          "/velato/penrose",      // Velato-Penrose thesis + phrase analysis
+          "/primitives",          // The 8 Quilt primitives
+        ],
         dimensions: EMBED_DIMENSIONS,
+        spectral: SPECTRAL_DIMENSIONS,
+        shape: "T^4 with θ=(√5-1)/2",
         timestamp: new Date().toISOString(),
+      });
+    }
+
+    // ── GET /shape/t4 — the SHAPE of the substrate ──
+    if (path === "/shape/t4" && request.method === "GET") {
+      return json({
+        shape: getShape(),
+        description: "The flat 4-torus T^4 with the Connes-Moscovici spectral triple, deformed to the irrational rotation algebra at θ = (√5−1)/2 — the golden ratio conjugate, the most irrational number, the most noncommutative.",
+        universal: "γ + η = 1",
+        theorems: "14 Grand Unification Theorems all project from this (A, H, D)",
+      });
+    }
+
+    // ── POST /spectral/invariants — compute the 14 spectral invariants of a query ──
+    if (path === "/spectral/invariants" && request.method === "POST") {
+      try {
+        const body = await request.json() as { vectors?: number[][] };
+        if (!body.vectors || !Array.isArray(body.vectors)) {
+          return json({ error: "Missing or invalid 'vectors' field" }, 400);
+        }
+        const invariants = computeSpectralInvariants(body.vectors);
+        return json({
+          invariants,
+          shape: getShape(),
+          note: "All 14 invariants are computed from the corpus of vectors via the Dirac operator D = JEPA prediction residual.",
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Spectral computation failed", detail: message }, 500);
+      }
+    }
+
+    // ── POST /tangle/projections — the 12 projections of 𝕋 ──
+    if (path === "/tangle/projections" && request.method === "POST") {
+      try {
+        const body = await request.json() as { states?: Array<{ gamma: number; eta: number }> };
+        if (!body.states || !Array.isArray(body.states)) {
+          return json({ error: "Missing or invalid 'states' field" }, 400);
+        }
+        const states = body.states.map((s, i) => ({
+          name: `state_${i}`,
+          e_coords: [s.gamma],
+          m_coords: [s.eta],
+          gamma: s.gamma,
+          eta: s.eta,
+          conservation: Math.abs(s.gamma + s.eta - 1) < 1e-9,
+        }));
+        const result = computeTangleProjections(states);
+        return json({
+          tangle: getTangle(),
+          projections: result,
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Tangle projection failed", detail: message }, 500);
+      }
+    }
+
+    // ── GET /theorems — the 14 Grand Unification Theorems ──
+    if (path === "/theorems" && request.method === "GET") {
+      return json({
+        theorems: FOURTEEN_THEOREMS,
+        graph: THEOREM_GRAPH,
+        minimal_generators: [3, 5],
+        note: "T3 (Hochschild) and T5 (Category) generate all other 12. The graph is a DAG with one component.",
+      });
+    }
+
+    // ── POST /velato/penrose — analyze a Velato phrase ──
+    if (path === "/velato/penrose" && request.method === "POST") {
+      try {
+        const body = await request.json() as { text?: string };
+        if (!body.text) {
+          return json({ error: "Missing 'text' field" }, 400);
+        }
+        const analysis = analyzeVelatoPhrase(body.text);
+        const thesis = getVelatoPenroseThesis();
+        return json({
+          thesis,
+          analysis,
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return json({ error: "Velato analysis failed", detail: message }, 500);
+      }
+    }
+
+    // ── GET /primitives — the 8 Quilt primitives ──
+    if (path === "/primitives" && request.method === "GET") {
+      return json({
+        primitives: EIGHT_PRIMITIVES,
+        note: "These 8 primitives are the generators of the algebra A in the spectral triple (A, H, D).",
       });
     }
 
